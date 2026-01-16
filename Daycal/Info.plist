@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDisplayName</key>
+    <string>Daycal</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.jackmal.daycal</string>
+    <key>CFBundleName</key>
+    <string>Daycal</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.productivity</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>GOOGLE_CLIENT_ID</key>
+    <string>383261090717-9s4c84uuu69qmpb7i6irghf1lli3pskf.apps.googleusercontent.com</string>
+    <key>GOOGLE_REVERSE_CLIENT_ID</key>
+    <string>com.googleusercontent.apps.383261090717-9s4c84uuu69qmpb7i6irghf1lli3pskf</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>$(GOOGLE_REVERSE_CLIENT_ID)</string>
+            </array>
+        </dict>
+    </array>
+</dict>
+</plist>
