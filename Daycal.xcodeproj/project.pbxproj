@@ -24,21 +24,21 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		535844F28FC94BCE93DB74140316ADFB /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/LaunchAtLoginManager.swift; sourceTree = "<absolute>"; };
-		D7A67957BACB4F30AC4F21195B22C6BC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/AppDelegate.swift; sourceTree = "<absolute>"; };
-		48FFB30DA4A54B69A3D40E3D37AE8707 /* AuthRedirectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/AuthRedirectHandler.swift; sourceTree = "<absolute>"; };
-		DDD63DBD23D4464399CE18FFB81CF308 /* CalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/CalendarEvent.swift; sourceTree = "<absolute>"; };
-		6D9C090258484C7B8660EB60CA538B61 /* CalendarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/CalendarStore.swift; sourceTree = "<absolute>"; };
-		CE879EC561234A178D2F38321F04F62F /* CryptoHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/CryptoHelpers.swift; sourceTree = "<absolute>"; };
-		B90CD6D53F08425C94F503AC7553AA5F /* DaycalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/DaycalApp.swift; sourceTree = "<absolute>"; };
-		E744C1A1E21A45928542345084304C00 /* EventsMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/EventsMenuView.swift; sourceTree = "<absolute>"; };
-		968127D2087040C382F4DFC290C335B9 /* GoogleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/GoogleAuthService.swift; sourceTree = "<absolute>"; };
-		103243A9523C402F9B64220B1A087742 /* GoogleCalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/GoogleCalendarService.swift; sourceTree = "<absolute>"; };
-		D7DE027F676A48A6942CA1D1FCDCDBA6 /* GoogleOAuthConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/GoogleOAuthConfig.swift; sourceTree = "<absolute>"; };
-		F9459B4584B44BF7A918C80A500F70CF /* MenuBarLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/MenuBarLabelView.swift; sourceTree = "<absolute>"; };
-		7902ABD3FBB24CD49E54389E13DCE4CC /* TokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/TokenStore.swift; sourceTree = "<absolute>"; };
-		BCB8BF18CE27436EACF75AABDDB62A75 /* RedirectServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = /Users/jack/git/daycal/Sources/Daycal/RedirectServer.swift; sourceTree = "<absolute>"; };
-		F9669D372F3B4AC78D6480B91D719234 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = /Users/jack/git/daycal/Daycal/Info.plist; sourceTree = "<absolute>"; };
+		535844F28FC94BCE93DB74140316ADFB /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/LaunchAtLoginManager.swift; sourceTree = SOURCE_ROOT; };
+		D7A67957BACB4F30AC4F21195B22C6BC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
+		48FFB30DA4A54B69A3D40E3D37AE8707 /* AuthRedirectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/AuthRedirectHandler.swift; sourceTree = SOURCE_ROOT; };
+		DDD63DBD23D4464399CE18FFB81CF308 /* CalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/CalendarEvent.swift; sourceTree = SOURCE_ROOT; };
+		6D9C090258484C7B8660EB60CA538B61 /* CalendarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/CalendarStore.swift; sourceTree = SOURCE_ROOT; };
+		CE879EC561234A178D2F38321F04F62F /* CryptoHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/CryptoHelpers.swift; sourceTree = SOURCE_ROOT; };
+		B90CD6D53F08425C94F503AC7553AA5F /* DaycalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/DaycalApp.swift; sourceTree = SOURCE_ROOT; };
+		E744C1A1E21A45928542345084304C00 /* EventsMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/EventsMenuView.swift; sourceTree = SOURCE_ROOT; };
+		968127D2087040C382F4DFC290C335B9 /* GoogleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/GoogleAuthService.swift; sourceTree = SOURCE_ROOT; };
+		103243A9523C402F9B64220B1A087742 /* GoogleCalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/GoogleCalendarService.swift; sourceTree = SOURCE_ROOT; };
+		D7DE027F676A48A6942CA1D1FCDCDBA6 /* GoogleOAuthConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/GoogleOAuthConfig.swift; sourceTree = SOURCE_ROOT; };
+		F9459B4584B44BF7A918C80A500F70CF /* MenuBarLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/MenuBarLabelView.swift; sourceTree = SOURCE_ROOT; };
+		7902ABD3FBB24CD49E54389E13DCE4CC /* TokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/TokenStore.swift; sourceTree = SOURCE_ROOT; };
+		BCB8BF18CE27436EACF75AABDDB62A75 /* RedirectServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/RedirectServer.swift; sourceTree = SOURCE_ROOT; };
+		F9669D372F3B4AC78D6480B91D719234 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Daycal/Info.plist; sourceTree = SOURCE_ROOT; };
 		1F59B19F449242D4AC33DDAAC95FAEEB /* Daycal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Daycal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -109,10 +109,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		231A49875AB7488A8723C653CBA2D987 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "/Users/jack/git/daycal/Daycal/Info.plist"; PRODUCT_BUNDLE_IDENTIFIER = com.jackmal.daycal; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = Daycal; SWIFT_VERSION = 5.9;}; name = Debug; };
-		1972127CC949410898FE23EFB31DC5D9 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "/Users/jack/git/daycal/Daycal/Info.plist"; PRODUCT_BUNDLE_IDENTIFIER = com.jackmal.daycal; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = Daycal; SWIFT_VERSION = 5.9;}; name = Release; };
-		D31D27B8C16440C19203EC9B4CF566EB /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "/Users/jack/git/daycal/Daycal/Info.plist"; PRODUCT_BUNDLE_IDENTIFIER = com.jackmal.daycal; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = Daycal; SWIFT_VERSION = 5.9;}; name = Debug; };
-		7FD36384F2094D4095CAE7D6ECC018A3 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "/Users/jack/git/daycal/Daycal/Info.plist"; PRODUCT_BUNDLE_IDENTIFIER = com.jackmal.daycal; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = Daycal; SWIFT_VERSION = 5.9;}; name = Release; };
+		231A49875AB7488A8723C653CBA2D987 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "$(SRCROOT)/Daycal/Info.plist"; PRODUCT_BUNDLE_IDENTIFIER = com.jackmal.daycal; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = Daycal; SWIFT_VERSION = 5.9;}; name = Debug; };
+		1972127CC949410898FE23EFB31DC5D9 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "$(SRCROOT)/Daycal/Info.plist"; PRODUCT_BUNDLE_IDENTIFIER = com.jackmal.daycal; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = Daycal; SWIFT_VERSION = 5.9;}; name = Release; };
+		D31D27B8C16440C19203EC9B4CF566EB /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "$(SRCROOT)/Daycal/Info.plist"; PRODUCT_BUNDLE_IDENTIFIER = com.jackmal.daycal; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = Daycal; SWIFT_VERSION = 5.9;}; name = Debug; };
+		7FD36384F2094D4095CAE7D6ECC018A3 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "$(SRCROOT)/Daycal/Info.plist"; PRODUCT_BUNDLE_IDENTIFIER = com.jackmal.daycal; MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_NAME = Daycal; SWIFT_VERSION = 5.9;}; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
