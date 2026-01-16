@@ -25,41 +25,69 @@ final class GoogleAuthService: NSObject {
     private var authContinuation: CheckedContinuation<OAuthToken, Error>?
     private let redirectServer = RedirectServer()
 
+    private static func exchangeCodeForToken(code: String) async throws -> OAuthToken {
+        var request = URLRequest(url: GoogleOAuthConfig.tokenURL)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        let body = [
+            "code": code,
+            "client_id": GoogleOAuthConfig.clientID,
+            "client_secret": GoogleOAuthConfig.clientSecret,
+            "redirect_uri": GoogleOAuthConfig.redirectURI,
+            "grant_type": "authorization_code"
+        ]
+
+        request.httpBody = body
+            .map { "\($0.key)=\($0.value)" }
+            .joined(separator: "&")
+            .data(using: .utf8)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw CalendarAuthError.tokenExchangeFailed
+        }
+
+        let payload = try JSONDecoder().decode(TokenResponse.self, from: data)
+        return OAuthToken(
+            accessToken: payload.accessToken,
+            refreshToken: payload.refreshToken ?? "",
+            expiration: Date().addingTimeInterval(TimeInterval(payload.expiresIn))
+        )
+    }
+
     func signIn() async throws -> OAuthToken {
         let state = UUID().uuidString
         try redirectServer.start()
+        let server = redirectServer
         let url = buildAuthURL(state: state)
         NSWorkspace.shared.open(url)
 
         return try await withCheckedThrowingContinuation { continuation in
             authContinuation = continuation
-            AuthRedirectHandler.shared.start { [weak self] result in
+            AuthRedirectHandler.shared.start { result in
                 switch result {
                 case .success(let code):
                     Task {
                         do {
-                            let token = try await self?.exchangeCodeForToken(code: code)
-                            self?.redirectServer.stop()
-                            if let token {
-                                continuation.resume(returning: token)
-                            } else {
-                                continuation.resume(throwing: CalendarAuthError.tokenExchangeFailed)
-                            }
+                            let token = try await GoogleAuthService.exchangeCodeForToken(code: code)
+                            server.stop()
+                            continuation.resume(returning: token)
                         } catch {
-                            self?.redirectServer.stop()
+                            server.stop()
                             continuation.resume(throwing: error)
                         }
                     }
                 case .failure(let error):
-                    self?.redirectServer.stop()
+                    server.stop()
                     continuation.resume(throwing: error)
                 }
             }
 
-            Task { [weak self] in
+            Task {
                 try? await Task.sleep(nanoseconds: 30_000_000_000)
-                guard let self, self.redirectServer.isRunning else { return }
-                self.redirectServer.stop()
+                guard server.isRunning else { return }
+                server.stop()
                 continuation.resume(throwing: CalendarAuthError.cancelled)
             }
         }
@@ -108,36 +136,6 @@ final class GoogleAuthService: NSObject {
         return components.url!
     }
 
-    private func exchangeCodeForToken(code: String) async throws -> OAuthToken {
-        var request = URLRequest(url: GoogleOAuthConfig.tokenURL)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-
-        let body = [
-            "code": code,
-            "client_id": GoogleOAuthConfig.clientID,
-            "client_secret": GoogleOAuthConfig.clientSecret,
-            "redirect_uri": GoogleOAuthConfig.redirectURI,
-            "grant_type": "authorization_code"
-        ]
-
-        request.httpBody = body
-            .map { "\($0.key)=\($0.value)" }
-            .joined(separator: "&")
-            .data(using: .utf8)
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            throw CalendarAuthError.tokenExchangeFailed
-        }
-
-        let payload = try JSONDecoder().decode(TokenResponse.self, from: data)
-        return OAuthToken(
-            accessToken: payload.accessToken,
-            refreshToken: payload.refreshToken ?? "",
-            expiration: Date().addingTimeInterval(TimeInterval(payload.expiresIn))
-        )
-    }
 }
 
 private struct TokenResponse: Codable {
