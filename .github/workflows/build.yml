@@ -1,0 +1,30 @@
+name: Build macOS app
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build app
+        run: |
+          xcodebuild -project Daycal.xcodeproj -scheme Daycal -configuration Release -derivedDataPath build
+
+      - name: Package app
+        run: |
+          mkdir -p dist
+          cp -R "build/Build/Products/Release/Daycal.app" dist/
+          cd dist
+          ditto -c -k --sequesterRsrc --keepParent Daycal.app Daycal.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Daycal
+          path: dist/Daycal.zip
