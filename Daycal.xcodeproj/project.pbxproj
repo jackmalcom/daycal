@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E10A2062E9B84AF3B41D66DB637E49C6 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A58BF5BFDB4946ABE7DE1E82A2CDAA /* UpdateManager.swift */; };
 		3EF3F897261745C78EDE6D06E29EC6D1 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535844F28FC94BCE93DB74140316ADFB /* LaunchAtLoginManager.swift */; };
 		6EA4CC8FCA0342FAB17C829DB7B261DC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A67957BACB4F30AC4F21195B22C6BC /* AppDelegate.swift */; };
 		8147EF31B8AE4464AA928127315531EC /* AuthRedirectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48FFB30DA4A54B69A3D40E3D37AE8707 /* AuthRedirectHandler.swift */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C8A58BF5BFDB4946ABE7DE1E82A2CDAA /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/UpdateManager.swift; sourceTree = SOURCE_ROOT; };
 		535844F28FC94BCE93DB74140316ADFB /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/LaunchAtLoginManager.swift; sourceTree = SOURCE_ROOT; };
 		D7A67957BACB4F30AC4F21195B22C6BC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		48FFB30DA4A54B69A3D40E3D37AE8707 /* AuthRedirectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Daycal/AuthRedirectHandler.swift; sourceTree = SOURCE_ROOT; };
@@ -59,6 +61,7 @@
 			103243A9523C402F9B64220B1A087742 /* GoogleCalendarService.swift */,
 			D7DE027F676A48A6942CA1D1FCDCDBA6 /* GoogleOAuthConfig.swift */,
 			F9459B4584B44BF7A918C80A500F70CF /* MenuBarLabelView.swift */,
+			C8A58BF5BFDB4946ABE7DE1E82A2CDAA /* UpdateManager.swift */,
 			535844F28FC94BCE93DB74140316ADFB /* LaunchAtLoginManager.swift */,
 			7902ABD3FBB24CD49E54389E13DCE4CC /* TokenStore.swift */,
 			BCB8BF18CE27436EACF75AABDDB62A75 /* RedirectServer.swift */,
@@ -105,6 +108,7 @@
 			4DC71E7165B04FB1B8524B503B4301C9 /* TokenStore.swift in Sources */,
 			3EF3F897261745C78EDE6D06E29EC6D1 /* LaunchAtLoginManager.swift in Sources */,
 			3053C5D78C564E61A7450FDC4064B6D5 /* RedirectServer.swift in Sources */,
+			E10A2062E9B84AF3B41D66DB637E49C6 /* UpdateManager.swift in Sources */,
 		); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
