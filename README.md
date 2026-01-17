@@ -4,6 +4,10 @@ Your calendar, at a glance.
 
 <img width="311" height="226" alt="Screenshot 2026-01-16 at 4 08 00 PM" src="https://github.com/user-attachments/assets/cc7cebe8-4ac4-4edc-bdff-7bdc3a8a7054" />
 
+## 🚧 This is a beta! 🚧
+
+This app currently relies on testing oauth, and is _**not**_ notarized. To disable the warning that prevents you from running the app, run `xattr -dr com.apple.quarantine /Applications/Daycal.app` in your terminal after copying the .dmg to your Applications folder. To sign in, you either need to be added to the official testing oauth, or create your own as mentioned below.
+
 ## Build
 
 - Open `Daycal.xcodeproj` in Xcode
