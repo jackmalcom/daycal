@@ -1,13 +1,18 @@
 import Foundation
 
 final class AuthRedirectHandler {
+    struct AuthResponse {
+        let code: String
+        let state: String?
+    }
+
     static let shared = AuthRedirectHandler()
 
-    private var completion: ((Result<String, Error>) -> Void)?
+    private var completion: ((Result<AuthResponse, Error>) -> Void)?
 
     private init() {}
 
-    func start(completion: @escaping (Result<String, Error>) -> Void) {
+    func start(completion: @escaping (Result<AuthResponse, Error>) -> Void) {
         self.completion = completion
     }
 
@@ -20,7 +25,8 @@ final class AuthRedirectHandler {
             return
         }
 
-        completion?(.success(code))
+        let state = items.first(where: { $0.name == "state" })?.value
+        completion?(.success(AuthResponse(code: code, state: state)))
         completion = nil
     }
 }

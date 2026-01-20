@@ -43,6 +43,10 @@ final class TokenStore {
         }
 
         if token.isExpired {
+            guard !token.refreshToken.isEmpty else {
+                clear()
+                throw CalendarAuthError.missingToken
+            }
             let refreshed = try await GoogleAuthService().refresh(token: token)
             save(token: refreshed)
             return refreshed

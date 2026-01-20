@@ -6,6 +6,8 @@
     <string>Daycal</string>
     <key>CFBundleIdentifier</key>
     <string>com.jackmal.daycal</string>
+    <key>CFBundleVersion</key>
+    <string>$(CURRENT_PROJECT_VERSION)</string>
     <key>CFBundleName</key>
     <string>Daycal</string>
     <key>CFBundlePackageType</key>

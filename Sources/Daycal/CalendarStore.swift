@@ -22,12 +22,21 @@ final class CalendarStore: ObservableObject {
 
     init() {
         Task {
-            if tokenStore.hasToken {
-                authState = .signedIn
-                await refreshEvents()
-                scheduleAutoRefresh()
-            } else {
+            await restoreSession()
+        }
+    }
+
+    private func restoreSession() async {
+        do {
+            _ = try await tokenStore.validToken()
+            authState = .signedIn
+            await refreshEvents()
+            scheduleAutoRefresh()
+        } catch {
+            if let authError = error as? CalendarAuthError, authError == .missingToken {
                 authState = .signedOut
+            } else {
+                authState = .error(error.localizedDescription)
             }
         }
     }
@@ -44,7 +53,11 @@ final class CalendarStore: ObservableObject {
                 scheduleAutoRefresh()
             } catch {
                 if Task.isCancelled { return }
-                authState = .error(error.localizedDescription)
+                if let authError = error as? CalendarAuthError, authError == .missingToken {
+                    authState = .signedOut
+                } else {
+                    authState = .error(error.localizedDescription)
+                }
             }
         }
     }
@@ -60,11 +73,6 @@ final class CalendarStore: ObservableObject {
     }
 
     func refreshEvents() async {
-        guard tokenStore.hasValidToken else {
-            authState = .signedOut
-            return
-        }
-
         isLoading = true
         defer { isLoading = false }
 

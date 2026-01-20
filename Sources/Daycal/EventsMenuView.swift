@@ -95,8 +95,13 @@ struct EventsMenuView: View {
                 }
             case .error(let message):
                 Text("Error: \(message)")
-                Button("Try Again") {
-                    calendarStore.signIn()
+                HStack(spacing: 8) {
+                    Button("Try Again") {
+                        calendarStore.signIn()
+                    }
+                    Button("Quit") {
+                        NSApplication.shared.terminate(nil)
+                    }
                 }
             }
         }

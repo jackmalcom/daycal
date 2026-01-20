@@ -6,6 +6,7 @@ enum CalendarAuthError: Error, LocalizedError {
     case invalidRedirect
     case tokenExchangeFailed
     case cancelled
+    case stateMismatch
 
     var errorDescription: String? {
         switch self {
@@ -17,9 +18,12 @@ enum CalendarAuthError: Error, LocalizedError {
             return "Could not exchange authorization code."
         case .cancelled:
             return "Sign-in was cancelled."
+        case .stateMismatch:
+            return "Sign-in response did not match the request."
         }
     }
 }
+
 
 final class GoogleAuthService: NSObject {
     private var authContinuation: CheckedContinuation<OAuthToken, Error>?
@@ -67,10 +71,15 @@ final class GoogleAuthService: NSObject {
             authContinuation = continuation
             AuthRedirectHandler.shared.start { result in
                 switch result {
-                case .success(let code):
+                case .success(let response):
+                    guard response.state == state else {
+                        server.stop()
+                        continuation.resume(throwing: CalendarAuthError.stateMismatch)
+                        return
+                    }
                     Task {
                         do {
-                            let token = try await GoogleAuthService.exchangeCodeForToken(code: code)
+                            let token = try await GoogleAuthService.exchangeCodeForToken(code: response.code)
                             server.stop()
                             continuation.resume(returning: token)
                         } catch {
@@ -85,7 +94,7 @@ final class GoogleAuthService: NSObject {
             }
 
             Task {
-                try? await Task.sleep(nanoseconds: 30_000_000_000)
+                try? await Task.sleep(nanoseconds: 60_000_000_000)
                 guard server.isRunning else { return }
                 server.stop()
                 continuation.resume(throwing: CalendarAuthError.cancelled)

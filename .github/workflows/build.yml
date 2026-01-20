@@ -14,7 +14,7 @@ jobs:
 
       - name: Build app
         run: |
-          xcodebuild -project Daycal.xcodeproj -scheme Daycal -configuration Release -derivedDataPath build
+          xcodebuild -project Daycal.xcodeproj -scheme Daycal -configuration Release -derivedDataPath build CURRENT_PROJECT_VERSION=${{ github.run_number }}
 
       - name: Package app
         run: |
