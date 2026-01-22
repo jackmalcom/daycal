@@ -170,3 +170,5 @@ final class CalendarStore: ObservableObject {
         }
     }
 }
+
+extension CalendarStore: @unchecked Sendable {}
