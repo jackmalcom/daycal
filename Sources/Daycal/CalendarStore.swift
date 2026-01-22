@@ -134,24 +134,28 @@ final class CalendarStore: ObservableObject {
 
     private func startNetworkMonitoring() {
         pathMonitor.pathUpdateHandler = { [weak self] path in
+            guard let self else { return }
             Task { @MainActor in
-                guard let self else { return }
-                let online = path.status == .satisfied
-                guard online != self.isOnline else { return }
-                self.isOnline = online
-
-                if online {
-                    if self.authState == .offline {
-                        self.authState = .signedIn
-                    }
-                    await self.refreshEvents()
-                    self.scheduleAutoRefresh()
-                } else if self.authState == .signedIn {
-                    self.authState = .offline
-                }
+                await self.handlePathUpdate(path)
             }
         }
         pathMonitor.start(queue: pathMonitorQueue)
+    }
+
+    private func handlePathUpdate(_ path: NWPath) async {
+        let online = path.status == .satisfied
+        guard online != isOnline else { return }
+        isOnline = online
+
+        if online {
+            if authState == .offline {
+                authState = .signedIn
+            }
+            await refreshEvents()
+            scheduleAutoRefresh()
+        } else if authState == .signedIn {
+            authState = .offline
+        }
     }
 
     private func isOfflineError(_ error: Error) -> Bool {
