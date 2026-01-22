@@ -24,6 +24,8 @@ struct MenuBarLabelView: View {
             return "Signing in..."
         case .signedOut:
             return "Daycal"
+        case .offline:
+            return "Offline"
         case .error:
             return "Auth error"
         }

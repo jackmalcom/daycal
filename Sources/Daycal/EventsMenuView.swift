@@ -93,6 +93,18 @@ struct EventsMenuView: View {
                     }
                     .buttonStyle(.bordered)
                 }
+            case .offline:
+                Text("You’re offline. We’ll reconnect automatically.")
+                HStack(spacing: 8) {
+                    Button("Retry") {
+                        Task {
+                            await calendarStore.refreshEvents()
+                        }
+                    }
+                    Button("Quit") {
+                        NSApplication.shared.terminate(nil)
+                    }
+                }
             case .error(let message):
                 Text("Error: \(message)")
                 HStack(spacing: 8) {
