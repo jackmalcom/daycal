@@ -39,6 +39,9 @@ final class CalendarStore: ObservableObject {
             await refreshEvents()
             scheduleAutoRefresh()
         } catch {
+            if isCancellationError(error) {
+                return
+            }
             if isOfflineError(error) {
                 if tokenStore.hasToken {
                     authState = .offline
@@ -69,6 +72,9 @@ final class CalendarStore: ObservableObject {
                 scheduleAutoRefresh()
             } catch {
                 if Task.isCancelled { return }
+                if isCancellationError(error) {
+                    return
+                }
                 if isOfflineError(error) {
                     authState = tokenStore.hasToken ? .offline : .signedOut
                     return
@@ -110,6 +116,9 @@ final class CalendarStore: ObservableObject {
                 authState = .signedIn
             }
         } catch {
+            if isCancellationError(error) {
+                return
+            }
             if let authError = error as? CalendarAuthError, authError == .missingToken {
                 authState = .signedOut
                 return
@@ -172,6 +181,16 @@ final class CalendarStore: ObservableObject {
         default:
             return false
         }
+    }
+
+    private func isCancellationError(_ error: Error) -> Bool {
+        if error is CancellationError {
+            return true
+        }
+        if let urlError = error as? URLError, urlError.code == .cancelled {
+            return true
+        }
+        return false
     }
 }
 
