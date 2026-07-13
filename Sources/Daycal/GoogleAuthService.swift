@@ -97,7 +97,7 @@ final class GoogleAuthService: NSObject {
                         self?.finish(attempt, with: .failure(CalendarAuthError.stateMismatch))
                         return
                     }
-                    Task {
+                    Task { [weak self] in
                         do {
                             let token = try await GoogleAuthService.exchangeCodeForToken(code: response.code)
                             self?.finish(attempt, with: .success(token))
