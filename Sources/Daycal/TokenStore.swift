@@ -10,17 +10,14 @@ struct OAuthToken: Codable {
     }
 }
 
+@MainActor
 final class TokenStore {
     private let tokenKey = "DaycalOAuthToken"
     private let userDefaults = UserDefaults.standard
+    private var refreshTask: Task<OAuthToken, Error>?
 
     var hasToken: Bool {
         loadToken() != nil
-    }
-
-    var hasValidToken: Bool {
-        guard let token = loadToken() else { return false }
-        return !token.isExpired
     }
 
     func save(token: OAuthToken) {
@@ -34,6 +31,8 @@ final class TokenStore {
     }
 
     func clear() {
+        refreshTask?.cancel()
+        refreshTask = nil
         userDefaults.removeObject(forKey: tokenKey)
     }
 
@@ -41,17 +40,42 @@ final class TokenStore {
         guard let token = loadToken() else {
             throw CalendarAuthError.missingToken
         }
+        if !token.isExpired {
+            return token
+        }
+        return try await refreshedToken()
+    }
 
-        if token.isExpired {
-            guard !token.refreshToken.isEmpty else {
-                clear()
-                throw CalendarAuthError.missingToken
-            }
-            let refreshed = try await GoogleAuthService().refresh(token: token)
-            save(token: refreshed)
-            return refreshed
+    /// Refreshes even if the access token looks valid — used when the API
+    /// rejects a token before its stated expiration (e.g. revoked mid-flight).
+    func refreshedToken() async throws -> OAuthToken {
+        if let refreshTask {
+            return try await refreshTask.value
         }
 
-        return token
+        guard let token = loadToken() else {
+            throw CalendarAuthError.missingToken
+        }
+        guard !token.refreshToken.isEmpty else {
+            clear()
+            throw CalendarAuthError.reauthRequired
+        }
+
+        let task = Task {
+            try await GoogleAuthService().refresh(token: token)
+        }
+        refreshTask = task
+        defer { refreshTask = nil }
+
+        do {
+            let refreshed = try await task.value
+            save(token: refreshed)
+            return refreshed
+        } catch CalendarAuthError.reauthRequired {
+            // The refresh token was rejected outright; a new sign-in is the
+            // only way forward. Transient failures keep the token for retry.
+            clear()
+            throw CalendarAuthError.reauthRequired
+        }
     }
 }

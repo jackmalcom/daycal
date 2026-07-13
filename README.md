@@ -8,6 +8,8 @@ Your calendar, at a glance.
 
 This app currently relies on testing oauth, and is _**not**_ notarized. To disable the warning that prevents you from running the app, run `xattr -dr com.apple.quarantine /Applications/Daycal.app` in your terminal after copying the .dmg to your Applications folder. To sign in, you either need to be added to the official testing oauth, or create your own as mentioned below.
 
+> **Note on re-auth:** while the Google Cloud OAuth consent screen is in **Testing** publishing status, Google expires refresh tokens after 7 days, forcing a new sign-in every week. Publishing the consent screen to **Production** (no verification needed for personal use — sign-in just shows an "unverified app" interstitial once) makes refresh tokens long-lived.
+
 ## Build
 
 - Open `Daycal.xcodeproj` in Xcode

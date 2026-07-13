@@ -1,5 +1,19 @@
 import Foundation
 
+enum CalendarServiceError: Error, LocalizedError {
+    case unauthorized
+    case requestFailed(statusCode: Int)
+
+    var errorDescription: String? {
+        switch self {
+        case .unauthorized:
+            return "Google Calendar rejected the current authorization."
+        case .requestFailed(let statusCode):
+            return "Calendar request failed (HTTP \(statusCode))."
+        }
+    }
+}
+
 final class GoogleCalendarService {
     func fetchTodayEvents(token: OAuthToken) async throws -> [CalendarEvent] {
         let calendarURL = try makeEventsURL()
@@ -7,8 +21,14 @@ final class GoogleCalendarService {
         request.setValue("Bearer \(token.accessToken)", forHTTPHeaderField: "Authorization")
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            throw CalendarAuthError.tokenExchangeFailed
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        guard http.statusCode == 200 else {
+            if http.statusCode == 401 {
+                throw CalendarServiceError.unauthorized
+            }
+            throw CalendarServiceError.requestFailed(statusCode: http.statusCode)
         }
 
         let payload = try JSONDecoder().decode(CalendarResponse.self, from: data)
@@ -41,7 +61,7 @@ final class GoogleCalendarService {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: now)
         guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
-            throw CalendarAuthError.tokenExchangeFailed
+            throw URLError(.badURL)
         }
 
         let formatter = ISO8601DateFormatter()
@@ -57,7 +77,7 @@ final class GoogleCalendarService {
             URLQueryItem(name: "timeMax", value: formatter.string(from: endOfDay))
         ]
         guard let url = components.url else {
-            throw CalendarAuthError.tokenExchangeFailed
+            throw URLError(.badURL)
         }
         return url
     }

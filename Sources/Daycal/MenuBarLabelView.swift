@@ -4,43 +4,39 @@ struct MenuBarLabelView: View {
     @ObservedObject var calendarStore: CalendarStore
 
     var body: some View {
-        Text(labelText)
-            .font(.system(size: 12, weight: .medium))
-    }
-
-    private var labelText: String {
-        switch calendarStore.authState {
-        case .signedIn:
-            guard let nextEvent = nextRelevantEvent else {
-                return "No meetings"
+        HStack(spacing: 3) {
+            Image(systemName: content.icon)
+            if let text = content.text {
+                Text(text)
+                    .font(.system(size: 12, weight: .medium))
             }
-
-            if nextEvent.isOngoing {
-                return "\(nextEvent.title) - \(timeRemainingText(for: nextEvent)) left"
-            }
-
-            return "\(nextEvent.title) in \(timeUntilText(for: nextEvent))"
-        case .signingIn:
-            return "Signing in..."
-        case .signedOut:
-            return "Daycal"
-        case .offline:
-            return "Offline"
-        case .error:
-            return "Auth error"
         }
     }
 
-    private var nextRelevantEvent: CalendarEvent? {
-        calendarStore.events.first { $0.end > Date() && !$0.isWorkingLocation }
+    private var content: (icon: String, text: String?) {
+        switch calendarStore.authState {
+        case .signedIn, .offline:
+            let now = calendarStore.now
+            guard let event = nextRelevantEvent(at: now) else {
+                return ("calendar", nil)
+            }
+
+            let icon = event.conferenceLink != nil ? "video.fill" : "calendar.badge.clock"
+            let emoji = event.firstEmoji.map { "\($0) " } ?? ""
+
+            if event.isOngoing(at: now) {
+                return (icon, "\(emoji)\(formatDuration(event.timeRemaining(at: now))) left")
+            }
+            return (icon, "\(emoji)in \(formatDuration(event.timeUntilStart(at: now)))")
+        case .signingIn:
+            return ("calendar", "…")
+        case .signedOut, .error:
+            return ("calendar.badge.exclamationmark", nil)
+        }
     }
 
-    private func timeUntilText(for event: CalendarEvent) -> String {
-        formatDuration(event.timeUntilStart)
-    }
-
-    private func timeRemainingText(for event: CalendarEvent) -> String {
-        formatDuration(event.timeRemaining)
+    private func nextRelevantEvent(at date: Date) -> CalendarEvent? {
+        calendarStore.events.first { $0.end > date && !$0.isWorkingLocation }
     }
 
     private func formatDuration(_ interval: TimeInterval) -> String {

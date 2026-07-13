@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import Network
+import AppKit
 
 @MainActor
 final class CalendarStore: ObservableObject {
@@ -8,6 +9,8 @@ final class CalendarStore: ObservableObject {
     @Published private(set) var authState: AuthState = .signedOut
     @Published private(set) var isLoading = false
     @Published private(set) var isOnline = true
+    @Published private(set) var now = Date()
+    @Published private(set) var lastSync: Date?
 
     private let tokenStore = TokenStore()
     private let calendarService = GoogleCalendarService()
@@ -16,6 +19,8 @@ final class CalendarStore: ObservableObject {
     private let pathMonitorQueue = DispatchQueue(label: "daycal.network")
     private var refreshTask: Task<Void, Never>?
     private var signInTask: Task<Void, Never>?
+    private var clockTask: Task<Void, Never>?
+    private var wakeObserver: NSObjectProtocol?
 
     enum AuthState: Equatable {
         case signedOut
@@ -26,38 +31,25 @@ final class CalendarStore: ObservableObject {
     }
 
     init() {
+        startClock()
         startNetworkMonitoring()
+        observeWake()
         Task {
             await restoreSession()
         }
     }
 
     private func restoreSession() async {
-        do {
-            _ = try await tokenStore.validToken()
-            authState = .signedIn
-            await refreshEvents()
-            scheduleAutoRefresh()
-        } catch {
-            if isCancellationError(error) {
-                return
-            }
-            if isOfflineError(error) {
-                if tokenStore.hasToken {
-                    authState = .offline
-                    scheduleAutoRefresh()
-                } else {
-                    authState = .signedOut
-                }
-                return
-            }
-
-            if let authError = error as? CalendarAuthError, authError == .missingToken {
-                authState = .signedOut
-            } else {
-                authState = .error(error.localizedDescription)
-            }
+        guard tokenStore.hasToken else {
+            authState = .signedOut
+            return
         }
+        // Trust the stored token until proven otherwise: refreshEvents demotes
+        // to offline/signedOut as needed, so a dead network at launch never
+        // blocks showing the signed-in UI.
+        authState = isOnline ? .signedIn : .offline
+        await refreshEvents()
+        scheduleAutoRefresh()
     }
 
     func signIn() {
@@ -71,15 +63,21 @@ final class CalendarStore: ObservableObject {
                 await refreshEvents()
                 scheduleAutoRefresh()
             } catch {
-                if Task.isCancelled { return }
-                if isCancellationError(error) {
+                if Task.isCancelled || isCancellationError(error) {
+                    return
+                }
+                if let authError = error as? CalendarAuthError, authError == .cancelled {
+                    if authState == .signingIn {
+                        authState = .signedOut
+                    }
                     return
                 }
                 if isOfflineError(error) {
                     authState = tokenStore.hasToken ? .offline : .signedOut
                     return
                 }
-                if let authError = error as? CalendarAuthError, authError == .missingToken {
+                if let authError = error as? CalendarAuthError,
+                   authError == .missingToken || authError == .reauthRequired {
                     authState = .signedOut
                 } else {
                     authState = .error(error.localizedDescription)
@@ -94,15 +92,16 @@ final class CalendarStore: ObservableObject {
         tokenStore.clear()
         authState = .signedOut
         events = []
+        lastSync = nil
         refreshTask?.cancel()
         refreshTask = nil
     }
 
     func refreshEvents() async {
+        guard authState != .signedOut, authState != .signingIn else { return }
+
         if !isOnline {
-            if authState == .signedIn {
-                authState = .offline
-            }
+            authState = tokenStore.hasToken ? .offline : .signedOut
             return
         }
 
@@ -110,24 +109,37 @@ final class CalendarStore: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let token = try await tokenStore.validToken()
-            events = try await calendarService.fetchTodayEvents(token: token)
-            if authState == .offline {
-                authState = .signedIn
+            var token = try await tokenStore.validToken()
+            do {
+                events = try await calendarService.fetchTodayEvents(token: token)
+            } catch CalendarServiceError.unauthorized {
+                // The access token was rejected before its stated expiration
+                // (revocation, clock skew). Force one refresh and retry.
+                token = try await tokenStore.refreshedToken()
+                events = try await calendarService.fetchTodayEvents(token: token)
             }
+            lastSync = Date()
+            authState = .signedIn
         } catch {
             if isCancellationError(error) {
                 return
             }
-            if let authError = error as? CalendarAuthError, authError == .missingToken {
+            if let authError = error as? CalendarAuthError,
+               authError == .missingToken || authError == .reauthRequired {
+                events = []
                 authState = .signedOut
                 return
             }
             if isOfflineError(error) {
-                authState = .offline
+                authState = tokenStore.hasToken ? .offline : .signedOut
                 return
             }
-            authState = .error(error.localizedDescription)
+            // Transient failure (5xx, rate limit, flaky wake-from-sleep
+            // networking): keep the cached schedule and let the auto-refresh
+            // loop retry. Only surface an error if there is nothing to show.
+            if lastSync == nil && events.isEmpty {
+                authState = .error(error.localizedDescription)
+            }
         }
     }
 
@@ -137,6 +149,31 @@ final class CalendarStore: ObservableObject {
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 60 * 1_000_000_000)
                 await refreshEvents()
+            }
+        }
+    }
+
+    private func startClock() {
+        clockTask = Task {
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 15 * 1_000_000_000)
+                now = Date()
+            }
+        }
+    }
+
+    private func observeWake() {
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.now = Date()
+                // Give the network stack a moment to come back up.
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                await self.refreshEvents()
             }
         }
     }
@@ -157,11 +194,7 @@ final class CalendarStore: ObservableObject {
         isOnline = online
 
         if online {
-            if authState == .offline {
-                authState = .signedIn
-            }
             await refreshEvents()
-            scheduleAutoRefresh()
         } else if authState == .signedIn {
             authState = .offline
         }
@@ -176,7 +209,9 @@ final class CalendarStore: ObservableObject {
              .cannotFindHost,
              .timedOut,
              .dnsLookupFailed,
-             .dataNotAllowed:
+             .dataNotAllowed,
+             .internationalRoamingOff,
+             .secureConnectionFailed:
             return true
         default:
             return false
